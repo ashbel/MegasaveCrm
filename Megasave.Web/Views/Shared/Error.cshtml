@@ -1,0 +1,46 @@
+﻿@model Megasave.Domain.Entities.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h4 class="m-0 text-dark">@ViewData["Title"]</h4>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="card ">
+            <div class="card-header">
+                <h1 class="text-danger">Error.</h1>
+                <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+            </div>
+            <div class="card-body">
+                @if (Model.ShowRequestId)
+                {
+                    <p>
+                        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                    </p>
+                    <p>
+                        <strong>Error Message:</strong> <code>@Model.ErrorMessage</code>
+                    </p>
+                }
+            </div>
+            <div class="card-footer">
+                <div class="btn-group btn-group-sm ">
+                    <div class="btn-group btn-group-sm ">
+                        <a href="" class="btn btn-info btn-sm">BACK</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

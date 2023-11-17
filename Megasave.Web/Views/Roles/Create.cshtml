@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Roles";
+}
+
+@model string
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h4 class="m-0 text-dark">@ViewData["Title"]</h4>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="card ">
+            <div class="card-header">
+                <h4>Create Role</h4>
+            </div>
+            <div class="card-body">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <form asp-action="Create" method="post">
+                    <div class="form-group col-6">
+                        <label for="name">Name:</label>
+                        <input name="name" class="form-control form-control-sm" />
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary col-3">Create</button>
+                </form>
+
+            </div>
+            <div class="card-footer">
+                <a asp-action="Index" class="btn btn-sm btn-secondary">Back To List</a>
+            </div>
+        </div>
+    </div>
+</section>

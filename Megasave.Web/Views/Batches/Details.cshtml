@@ -1,0 +1,409 @@
+﻿@using Megasave.Domain.Enums
+@model Megasave.Domain.DTOs.BatchDto
+
+@{
+    ViewData["Title"] = "Purchase Order";
+}
+
+<div class="container">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0"> @ViewData["Title"] <small>details</small></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <legend>PO Number: #@Model.DocumentNumber <span class="float-right">Status: @Model.Status &nbsp <a href="" type="submit" class="float-right" data-toggle="tooltip" title="Save"><i class="fa fa-save"></i> </a></span></legend>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" class="form-control form-control-sm" disabled type="hidden" />
+                    <input asp-for="BranchId" class="form-control form-control-sm" disabled type="hidden" />
+                    <input asp-for="UserId" class="form-control form-control-sm" disabled type="hidden" />
+                    <input asp-for="DocumentNumber" class="form-control form-control-sm" disabled type="hidden" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control form-control-sm" disabled />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Date" class="control-label"></label>
+                                <input asp-for="Date" class="form-control form-control-sm" disabled type="datetime" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Count" class="control-label"></label>
+                                <input asp-for="Count" class="form-control form-control-sm" disabled />
+                                <span asp-validation-for="Count" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Total" class="control-label"></label>
+                                <input asp-for="Total" class="form-control form-control-sm" disabled />
+                                <span asp-validation-for="Total" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label"></label>
+                                <input asp-for="Status" class="form-control form-control-sm" disabled />
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="jsGrid"></div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn btn-group-sm">
+                                Attachments : <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addFile"><i class="fa fa-paperclip"></i> Attach File</button>
+                                <br />
+                            </div>
+                            @{
+                                <div class="row">
+                                    <div class="col-md-12 offset-sm-1">
+                                        <ul>
+                                            @foreach (var l in Model.FileList)
+                                            {
+                                                <li>
+                                                    <a asp-action="DownloadFile" asp-route-id="@l.Id" data-toggle="tooltip" title="Download"><i class="fa fa-paperclip"></i> @l.Description</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Notes" class="control-label"></label>
+                        <textarea asp-for="Notes" class="form-control form-control-sm" disabled rows="5"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Prepared" class="control-label">Prepared By :</label>
+                        @Html.DisplayFor(modelItem => Model.User)
+                        <ul>
+                            @foreach (var l in Model.BatchesHistory)
+                            {
+                                <li>
+                                    <label class="control-label"> @Html.DisplayFor(modelItem => l.Action) :</label>
+                                    @Html.DisplayFor(modelItem => l.UserId)
+                                    @Html.DisplayFor(modelItem => l.Date)
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        <div class="row">
+                            @if (Model.Status == Status.Draft)
+                            {
+                                <div class="col-md-2">
+                                    <button type="reset" class="btn btn-danger btn-sm form-control form-control-sm"><i class="fas fa-window-close"></i> CANCEL</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-success btn-sm form-control form-control-sm"><i class="fas fa-save"></i> SAVE DRAFT</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-3">
+                                    <button type="submit" asp-action="Submit" class="btn btn-primary btn-sm form-control form-control-sm"><i class="fas fa-paper-plane"></i> SUBMIT FOR APPROVAL </button>
+                                </div>
+                            }
+                            @if (Model.Status == Status.Pending && User.IsInRole(Roles.Approver.ToString()))
+                            {
+                                <div class="col-md-2">
+                                    <button type="submit" asp-action="Reject" class="btn btn-danger btn-sm form-control form-control-sm"><i class="fas fa-window-close"></i> REJECT</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" asp-action="Approve" class="btn btn-success btn-sm form-control form-control-sm"><i class="fas fa-save"></i> APPROVE</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-3"></div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var batchId = $('#Id').val();
+    var branchId = $('#BranchId').val();
+    var suppliers = suppliers();
+    var categories = categories();
+    $("#jsGrid").jsGrid({
+        width: "100%",
+        height: "auto",
+        inserting: false,
+        editing: false,
+        sorting: true,
+        paging: true,
+        autoload: true,
+        pageSize: 10,
+        deleteConfirm: "Do you really want to delete client?",
+        controller: {
+            loadData: function (filter) {
+                var data = 'batchId=' + batchId;
+                return $.ajax({
+                    type: "POST",
+                    url: "/Batches/GetData",
+                    data: data,
+                    dataType: "json",
+                    success: function (status) {
+                        console.log(status);
+                    },
+                    processData: false,
+                    error: function (error) {
+                        console.log("Whoops something went wrong! " + error);
+                    }
+                });
+            },
+
+            //insertItem: function (item) {
+            //    item.BranchId = branchId;
+            //    item.BatchId = batchId;
+            //    item.DocumentName = $('#Name').val();
+            //    var data = JSON.stringify(item);
+            //    console.log(data);
+            //    return $.ajax({
+            //        type: "POST",
+            //        contentType: "application/json",
+            //        url: "/Batches/Add",
+            //        data: data,
+            //        success: function () {
+            //            window.location.reload();
+            //        }
+            //    });
+            //},
+
+            //updateItem: function (item) {
+            //    return $.ajax({
+            //        type: "PUT",
+            //        url: "/api/data/" + item.ID,
+            //        data: item,
+            //        dataType: "json"
+            //    });
+            //},
+
+            //deleteItem: function (item) {
+            //    return $.ajax({
+            //        type: "DELETE",
+            //        url: "/Batches/DeleteTran",
+            //        data: item,
+            //        dataType: "json"
+            //    });
+            //}
+        },
+
+
+        fields: [
+            { name: "description", title: "Item", type: "text", width: 150, validate: "required" },
+            { name: "supplierId", title: "Supplier", type: "select", items: suppliers, valueField: "id", textField: "name" },
+            { name: "categoryId", title: "Category", type: "select", items: categories, valueField: "id", textField: "name" },
+            { name: "quantity", type: "number", title: "Quantity" },
+            {
+                name: "amount", type: "number", title: "Amount",
+                itemTemplate: function(value) {
+                    return formatNumberForDisplay(value) ;
+                }
+            },
+            {
+                name: "Id", type: "text", css: "display: none", visible: false, valueField: "id", textField: "id", inserting: true
+                //insertTemplate: function () {
+                //    var input = this.__proto__.insertTemplate.call(this);
+                //    input.val(id);
+                //    return input;
+                //}
+            }
+            //{ type: "control" }
+        ]
+    });
+    function suppliers() {
+        var response;
+        $.ajax({
+            url: '/Batches/GetSuppliers',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            success: function (cities) {
+                response = cities;
+            }
+        });
+        return response;
+    }
+    function categories() {
+        var response;
+        $.ajax({
+            url: '/Batches/GetCategory',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            success: function (cities) {
+                response = cities;
+            }
+        });
+
+        return response;
+    }
+    function data(batchId) {
+        var response;
+
+        $.ajax({
+            url: '/Batches/GetData',
+            type: "POST",
+            dataType: "JSON",
+            data: { id: batchId },
+            async: false,
+            success: function (cities) {
+                console.log(cities);
+                response = cities;
+            }
+        });
+
+        return response;
+    }
+    function deleteFile(batchId) {
+        var data = JSON.stringify(id);
+        console.log("Delete File " + id + "  " + data);
+        $.ajax({
+            type: "POST",
+            url: "/Batches/DeleteFile",
+            contentType: 'application/json',
+            data: data,
+            success: function (status) {
+                console.log(status);
+                window.location.reload();
+            },
+            processData: false,
+            error: function (error) {
+                console.log("Whoops something went wrong! " + error);
+            }
+        });
+    }
+    function formatNumberForDisplay(numberToFormat) {
+        var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            digits: 2,
+        });
+
+        return formatter.format(numberToFormat);
+    }
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="addFile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Attach File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @*<form asp-action="AddFile">*@
+                <input asp-for="Id" class="form-control form-control-sm" disabled type="hidden" />
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="inputFile">File input</label>
+                            <input type="file" id="inputFile" name="inputFile" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="fileName">Description</label>
+                            <input type="text" id="filename" name="filename" placeholder="Optional" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <br />
+                        <button type="button" class="btn btn-success btn-sm form-control" onclick="submitFile()">Submit</button>
+                    </div>
+                </div>
+                @*</form>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitFile() {
+        var batchId = $('#Id').val();
+        var description = $('#filename').val();
+        var inputFile = $('#inputFile')[0];
+        var batchName = $('#Name').val();
+        var files = inputFile.files;
+        var fileData = new FormData();
+
+        fileData.append('inputFile', files[0]);
+        fileData.append('batchId', batchId);
+        fileData.append('description', description);
+        fileData.append('documentName', batchName);
+
+        $.ajax({
+            type: "POST",
+            url: "/Batches/AddFile",
+            data: fileData,
+            contentType: false,
+            success: function (status) {
+                window.location.reload();
+            },
+            processData: false,
+            error: function (error) {
+                console.log("Whoops something went wrong! " + error);
+            }
+        });
+    }
+</script>
+

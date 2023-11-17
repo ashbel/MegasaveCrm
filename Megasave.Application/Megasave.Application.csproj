@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.2.2" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.16" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\EmailFeatures\Commands\" />
+    <Folder Include="Features\EmailFeatures\Queries\" />
+    <Folder Include="Features\HomeFeatures\Commands\" />
+    <Folder Include="Features\HomeFeatures\Queries\" />
+    <Folder Include="Features\TargetFeatures\Commands\" />
+    <Folder Include="Features\TargetFeatures\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Megasave.Domain\Megasave.Domain.csproj" />
+    <ProjectReference Include="..\Megasave.Identity\Megasave.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

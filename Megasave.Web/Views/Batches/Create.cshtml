@@ -1,0 +1,324 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Megasave.Domain.DTOs.BatchDto
+
+@{
+    ViewData["Title"] = "Purchase Order";
+}
+
+<div class="container">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0"> @ViewData["Title"] <small>Create</small></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <legend>PO Number: #@Model.DocumentNumber <span class="float-right">Status: @Model.Status &nbsp <a href="" type="submit"  class="float-right" data-toggle="tooltip" title="Save"><i class="fa fa-save" ></i> </a></span></legend>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" class="form-control form-control-sm" type="hidden"/>
+                    <input asp-for="BranchId" class="form-control form-control-sm" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control form-control-sm"/>
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Date" class="control-label"></label>
+                                <input asp-for="Date" class="form-control form-control-sm" type="Date"/>
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Count" class="control-label"></label>
+                                <input asp-for="Count" class="form-control form-control-sm"/>
+                                <span asp-validation-for="Count" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Total" class="control-label"></label>
+                                <input asp-for="Total" class="form-control form-control-sm"/>
+                                <span asp-validation-for="Total" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label"></label>
+                                <input asp-for="Status" class="form-control form-control-sm"/>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="jsGrid"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn btn-group-sm">
+                                Attachments : <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addFile"><i class="fa fa-paperclip"></i> Attach File</button>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Notes" class="control-label"></label>
+                        <textarea asp-for="Notes" class="form-control form-control-sm" rows="5"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Prepared" class="control-label"></label>
+                        <input asp-for="Prepared" class="form-control form-control-sm"/>
+                        <span asp-validation-for="Prepared" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DocumentNumber" class="control-label"></label>
+                        <input asp-for="DocumentNumber" class="form-control form-control-sm"/>
+                        <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a asp-action="Index">Back to List</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var batchId = $('#Id').val();
+    var branchId = $('#BranchId').val();
+    var suppliers = suppliers();
+    var categories = categories();
+
+
+    $("#jsGrid").jsGrid({
+        width: "100%",
+        height: "400px",
+        inserting: true,
+        editing: true,
+        sorting: true,
+        paging: true,
+        autoload: true,
+        pageSize: 10,
+
+
+        //data: clients,
+        deleteConfirm: "Do you really want to delete client?",
+
+        controller: {
+            loadData: function (filter) {
+                return $.ajax({
+                    type: "POST",
+                    url: "/Batches/GetData",
+                    data: { id: batchId },
+                    dataType: "json"
+                });
+            },
+
+            insertItem: function (item) {
+                item.BranchId = branchId;
+                item.BatchId = batchId;
+                var data = JSON.stringify(item);
+                console.log(data);
+                return $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/Batches/Add",
+                    data: data,
+                    success: function (status) {
+                        window.location.reload();
+                    },
+                });
+            },
+
+            updateItem: function (item) {
+                return $.ajax({
+                    type: "PUT",
+                    url: "/api/data/" + item.ID,
+                    data: item,
+                    dataType: "json"
+                });
+            },
+
+            deleteItem: function (item) {
+                return $.ajax({
+                    type: "DELETE",
+                    url: "/Batches/DeleteTran",
+                    data: item,
+                    dataType: "json"
+                });
+            }
+        },
+
+
+        fields: [
+            { name: "description", title: "Item", type: "text", width: 150, validate: "required" },
+            { name: "supplierId", title: "Supplier", type: "select", items: suppliers, valueField: "id", textField: "name" },
+            { name: "categoryId", title: "Category", type: "select", items: categories, valueField: "id", textField: "name" },
+            { name: "quantity", type: "number", title: "Quantity" },
+            { name: "amount", type: "text", title: "Amount" },
+            { name: "Id", type: "text", css: "display: none", visible: false, valueField: "id", textField: "id", inserting: true
+                //insertTemplate: function () {
+                //    var input = this.__proto__.insertTemplate.call(this);
+                //    input.val(id);
+                //    return input;
+                //}
+            },
+            { type: "control" }
+        ]
+    });
+
+    function suppliers() {
+        var response;
+        $.ajax({
+            url: '/Batches/GetSuppliers',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            success: function (cities) {
+                response = cities;
+            }
+        });
+
+        return response;
+    }
+    function categories() {
+        var response;
+        $.ajax({
+            url: '/Batches/GetCategory',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            success: function (cities) {
+                response = cities;
+            }
+        });
+
+        return response;
+    }
+    function data(id) {
+        var response;
+
+        $.ajax({
+            url: '/Batches/GetData',
+            type: "POST",
+            dataType: "JSON",
+            data: { id: batchId },
+            async: false,
+            success: function (cities) {
+                response = cities;
+            }
+        });
+
+        return response;
+    }
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="addFile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Attach File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @*<form asp-action="AddFile">*@
+                <input asp-for="Id" class="form-control form-control-sm" type="hidden" />
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="inputFile">File input</label>
+                            <input type="file" id="inputFile" name="inputFile" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="fileName">Description</label>
+                            <input type="text" id="filename" name="filename" placeholder="Optional" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <br />
+                        <input type="button" class="btn btn-success btn-sm form-control" value="Submit" onclick="submitFile">
+                    </div>
+                </div>
+                @*</form>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitFile() {
+        var batchId = $('#Id').val();
+        var description = $('#filename').val();
+        var inputFile = $('#inputFile')[0];
+        var files = inputFile.files;
+        var fileData = new FormData();
+
+        fileData.append('inputFile', files[0]);
+        fileData.append('batchId', batchId);
+        fileData.append('description', description);
+
+        $.ajax({
+            type: "POST",
+            url: "/Batches/AddFile",
+            data: fileData,
+            contentType: false,
+            success: function (status) {
+                window.location.reload();
+            },
+            processData: false,
+            error: function (error) {
+                console.log("Whoops something went wrong! " + error);
+            }
+        });
+    }
+</script>

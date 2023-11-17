@@ -1,0 +1,68 @@
+﻿@model Megasave.Domain.DTOs.BankDto
+
+@{
+    ViewData["Title"] = "Banks";
+}
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0"> Banks <small>details</small></h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Banks</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Details</h4>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.BranchName)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.BranchName)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Account)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Account)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Comment)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Comment)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-sm btn-outline-success" asp-action="Index"><i class="fa fa-arrow-left"></i> Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
